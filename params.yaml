@@ -1,0 +1,22 @@
+# Hyperparameters and configuration
+data:
+  image_size: 224
+  batch_size: 32
+  train_ratio: 0.8
+  val_ratio: 0.1
+  test_ratio: 0.1
+  random_seed: 42
+
+model:
+  architecture: "SimpleCNN"
+  num_classes: 2
+  learning_rate: 0.001
+  epochs: 10
+  optimizer: "adam"
+  dropout: 0.5
+
+augmentation:
+  horizontal_flip: true
+  rotation_range: 20
+  zoom_range: 0.2
+  brightness_range: [0.8, 1.2]

@@ -1,0 +1,5 @@
+# Add patterns of files DVC should ignore
+# Similar to .gitignore
+*.pyc
+__pycache__
+.ipynb_checkpoints

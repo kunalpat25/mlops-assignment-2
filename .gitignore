@@ -1,0 +1,44 @@
+# Byte-compiled / optimized
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+venv/
+.venv/
+env/
+
+# Data (versioned by DVC)
+data/raw/
+data/processed/
+data/splits/
+!data/.gitkeep
+!data/*.dvc
+
+# Model artifacts (versioned by DVC)
+models/
+!models/.gitkeep
+
+# MLflow
+mlruns/
+
+# Artifacts
+artifacts/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Docker
+.dockerignore
+
+# DVC cache
+.dvc/cache
+.dvc/tmp

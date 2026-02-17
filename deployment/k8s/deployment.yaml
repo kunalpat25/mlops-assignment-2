@@ -1,0 +1,52 @@
+# Kubernetes Deployment for Cats vs Dogs Classifier
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: catdog-classifier
+  labels:
+    app: catdog-classifier
+    version: v1
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: catdog-classifier
+  template:
+    metadata:
+      labels:
+        app: catdog-classifier
+        version: v1
+    spec:
+      containers:
+        - name: catdog-classifier
+          image: ghcr.io/YOUR_GITHUB_USERNAME/catdog-classifier:latest
+          ports:
+            - containerPort: 8000
+              protocol: TCP
+          env:
+            - name: MODEL_PATH
+              value: /app/models/best_model.pt
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "250m"
+            limits:
+              memory: "2Gi"
+              cpu: "1000m"
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 15
+            periodSeconds: 30
+            timeoutSeconds: 10
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+      restartPolicy: Always

@@ -1,0 +1,16 @@
+# Kubernetes Service for Cats vs Dogs Classifier
+apiVersion: v1
+kind: Service
+metadata:
+  name: catdog-classifier-service
+  labels:
+    app: catdog-classifier
+spec:
+  type: NodePort
+  selector:
+    app: catdog-classifier
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8000
+      nodePort: 30080
