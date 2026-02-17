@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
         - name: catdog-classifier
-          image: ghcr.io/YOUR_GITHUB_USERNAME/catdog-classifier:latest
+          image: ghcr.io/kunalpat25/catdog-classifier:latest
           ports:
             - containerPort: 8000
               protocol: TCP

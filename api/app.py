@@ -23,13 +23,14 @@ from fastapi.responses import JSONResponse
 from torchvision import transforms
 from prometheus_client import Counter, Histogram, generate_latest, CONTENT_TYPE_LATEST
 from starlette.responses import Response
+from contextlib import asynccontextmanager
 
 # Add project root to path so we can import src modules
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT_ROOT / "src"))
 
-from model import SimpleCNN, predict_single
-from schemas import HealthResponse, PredictionResponse, ErrorResponse
+from src.model import SimpleCNN, predict_single
+from api.schemas import HealthResponse, PredictionResponse, ErrorResponse
 
 # ---------------------------------------------------------------------------
 # Logging Configuration
@@ -63,15 +64,6 @@ PREDICTION_CLASSES = Counter(
     ["class_label"],
 )
 
-# ---------------------------------------------------------------------------
-# App Initialization
-# ---------------------------------------------------------------------------
-app = FastAPI(
-    title="Cats vs Dogs Classifier API",
-    description="Binary image classification for a pet adoption platform",
-    version="1.0.0",
-)
-
 # Global model reference
 model = None
 MODEL_PATH = os.environ.get("MODEL_PATH", str(PROJECT_ROOT / "models" / "best_model.pt"))
@@ -85,8 +77,8 @@ inference_transform = transforms.Compose([
 ])
 
 
-@app.on_event("startup")
-def load_model_on_startup():
+@asynccontextmanager
+async def lifespan(app):
     """Load the trained model at application startup."""
     global model
     try:
@@ -99,6 +91,18 @@ def load_model_on_startup():
             logger.warning(f"Model file not found at {MODEL_PATH}. Service will start without a model.")
     except Exception as e:
         logger.error(f"Failed to load model: {e}")
+    yield
+
+
+# ---------------------------------------------------------------------------
+# App Initialization
+# ---------------------------------------------------------------------------
+app = FastAPI(
+    title="Cats vs Dogs Classifier API",
+    description="Binary image classification for a pet adoption platform",
+    version="1.0.0",
+    lifespan=lifespan,
+)
 
 
 # ---------------------------------------------------------------------------

@@ -41,19 +41,19 @@ def test_health(base_url: str) -> bool:
         print(f"  Response: {resp.json()}")
 
         if resp.status_code != 200:
-            print("  ❌ FAILED: Expected status 200")
+            print("FAILED: Expected status 200")
             return False
 
         data = resp.json()
         if data.get("status") != "healthy":
-            print("  ❌ FAILED: Status is not 'healthy'")
+            print("FAILED: Status is not 'healthy'")
             return False
 
-        print("  ✅ PASSED")
+        print("PASSED")
         return True
 
     except Exception as e:
-        print(f"  ❌ FAILED: {e}")
+        print(f"FAILED: {e}")
         return False
 
 
@@ -71,24 +71,24 @@ def test_prediction(base_url: str) -> bool:
         print(f"  Response: {resp.json()}")
 
         if resp.status_code != 200:
-            print(f"  ❌ FAILED: Expected status 200, got {resp.status_code}")
+            print(f"FAILED: Expected status 200, got {resp.status_code}")
             return False
 
         data = resp.json()
         if "label" not in data or "confidence" not in data:
-            print("  ❌ FAILED: Missing required fields in response")
+            print("FAILED: Missing required fields in response")
             return False
 
         if data["label"] not in ["cat", "dog"]:
-            print(f"  ❌ FAILED: Invalid label '{data['label']}'")
+            print(f"FAILED: Invalid label '{data['label']}'")
             return False
 
         print(f"  Predicted: {data['label']} (confidence: {data['confidence']:.4f})")
-        print("  ✅ PASSED")
+        print("PASSED")
         return True
 
     except Exception as e:
-        print(f"  ❌ FAILED: {e}")
+        print(f"FAILED: {e}")
         return False
 
 
@@ -103,14 +103,14 @@ def test_root(base_url: str) -> bool:
         print(f"  Status Code: {resp.status_code}")
 
         if resp.status_code != 200:
-            print("  ❌ FAILED")
+            print("FAILED")
             return False
 
-        print("  ✅ PASSED")
+        print("PASSED")
         return True
 
     except Exception as e:
-        print(f"  ❌ FAILED: {e}")
+        print(f"FAILED: {e}")
         return False
 
 
@@ -133,16 +133,16 @@ def main():
     print("=" * 50)
     all_passed = True
     for name, passed in results:
-        status = "✅ PASSED" if passed else "❌ FAILED"
+        status = "PASSED" if passed else "FAILED"
         print(f"  {name}: {status}")
         if not passed:
             all_passed = False
 
     if all_passed:
-        print("\n🎉 All smoke tests passed!")
+        print("\nAll smoke tests passed!")
         sys.exit(0)
     else:
-        print("\n💥 Some smoke tests failed!")
+        print("\n Some smoke tests failed!")
         sys.exit(1)
 
 
