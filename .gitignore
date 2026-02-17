@@ -15,9 +15,6 @@ data/splits/
 !data/.gitkeep
 !data/*.dvc
 
-# Model artifacts (versioned by DVC)
-models/
-!models/.gitkeep
 
 # MLflow
 mlruns/
