@@ -1,5 +1,5 @@
 # ---- Stage 1: Base image ----
-FROM python:3.10-slim AS base
+FROM python:3.12-slim AS base
 
 # Set environment variables
 ENV PYTHONDONTWRITEBYTECODE=1 \
@@ -13,9 +13,9 @@ RUN apt-get update && \
     apt-get install -y --no-install-recommends curl && \
     rm -rf /var/lib/apt/lists/*
 
-# ---- Stage 2: Install Python dependencies ----
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+# ---- Stage 2: Install Python dependencies (slim, inference only) ----
+COPY requirements-docker.txt .
+RUN pip install --no-cache-dir -r requirements-docker.txt
 
 # ---- Stage 3: Copy application code ----
 COPY src/ ./src/

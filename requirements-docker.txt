@@ -1,0 +1,19 @@
+# Minimal dependencies for the inference Docker container
+# (No DVC, MLflow, or training dependencies needed)
+
+# Core ML (inference only)
+torch==2.6.0
+torchvision==0.21.0
+numpy==1.26.4
+Pillow==11.1.0
+
+# API
+fastapi==0.115.8
+uvicorn==0.34.0
+python-multipart==0.0.20
+
+# Config
+pyyaml==6.0.2
+
+# Monitoring
+prometheus-client==0.21.1
