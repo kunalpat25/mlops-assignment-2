@@ -11,8 +11,8 @@ Usage:
 import sys
 import argparse
 import io
-import numpy as np
-from PIL import Image
+import struct
+import random
 
 try:
     import requests
@@ -22,11 +22,36 @@ except ImportError:
 
 
 def create_test_image() -> bytes:
-    """Create a simple test image for the prediction endpoint."""
-    img = Image.fromarray(np.random.randint(0, 255, (224, 224, 3), dtype=np.uint8))
-    buf = io.BytesIO()
-    img.save(buf, format="JPEG")
-    return buf.getvalue()
+    """Create a minimal valid BMP image using pure Python (no numpy/PIL needed)."""
+    width, height = 224, 224
+    # BMP file header (14 bytes) + DIB header (40 bytes) + pixel data
+    row_size = (width * 3 + 3) & ~3  # rows padded to 4-byte boundary
+    pixel_data_size = row_size * height
+    file_size = 54 + pixel_data_size
+
+    # BMP Header
+    bmp = bytearray()
+    bmp += b'BM'                              # Signature
+    bmp += struct.pack('<I', file_size)        # File size
+    bmp += struct.pack('<HH', 0, 0)            # Reserved
+    bmp += struct.pack('<I', 54)               # Pixel data offset
+    # DIB Header (BITMAPINFOHEADER)
+    bmp += struct.pack('<I', 40)               # DIB header size
+    bmp += struct.pack('<i', width)            # Width
+    bmp += struct.pack('<i', height)           # Height
+    bmp += struct.pack('<HH', 1, 24)           # Planes, bits per pixel
+    bmp += struct.pack('<I', 0)                # Compression (none)
+    bmp += struct.pack('<I', pixel_data_size)  # Image size
+    bmp += struct.pack('<ii', 2835, 2835)      # Resolution (72 DPI)
+    bmp += struct.pack('<II', 0, 0)            # Colors
+
+    # Pixel data (random RGB)
+    random.seed(42)
+    for _ in range(height):
+        row = bytes(random.randint(0, 255) for _ in range(width * 3))
+        bmp += row + b'\x00' * (row_size - width * 3)
+
+    return bytes(bmp)
 
 
 def test_health(base_url: str) -> bool:
@@ -65,7 +90,7 @@ def test_prediction(base_url: str) -> bool:
 
     try:
         image_bytes = create_test_image()
-        files = {"file": ("test.jpg", image_bytes, "image/jpeg")}
+        files = {"file": ("test.bmp", image_bytes, "image/bmp")}
         resp = requests.post(f"{base_url}/predict", files=files, timeout=30)
         print(f"  Status Code: {resp.status_code}")
         print(f"  Response: {resp.json()}")

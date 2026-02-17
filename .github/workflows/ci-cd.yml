@@ -140,6 +140,7 @@ jobs:
 
       - name: Run smoke tests
         run: |
+          pip install requests
           python scripts/smoke_test.py --url http://localhost:8000
 
       - name: Cleanup on failure
