@@ -14,9 +14,6 @@ services:
       - "8000:8000"
     environment:
       - MODEL_PATH=/app/models/best_model.pt
-    volumes:
-      - model-data:/app/models
-      - log-data:/app/logs
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
@@ -41,7 +38,3 @@ services:
     depends_on:
       - catdog-api
     restart: unless-stopped
-
-volumes:
-  model-data:
-  log-data:
