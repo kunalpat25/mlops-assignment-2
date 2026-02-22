@@ -38,3 +38,4 @@ services:
     depends_on:
       - catdog-api
     restart: unless-stopped
+  
